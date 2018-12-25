@@ -14,6 +14,13 @@ class Comment extends Migration
     public function up()
     {
         //
+
+        Schema::create('comments', function (Blueprint $table){
+            $table->increments('id');
+            $table->string('content');
+            $table->integer('product_id');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -24,5 +31,6 @@ class Comment extends Migration
     public function down()
     {
         //
+        Schema::dropIfExists('comments');
     }
 }

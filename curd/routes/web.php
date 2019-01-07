@@ -40,7 +40,7 @@ Route::get('/comment/{id}/edit','Comment@edit');
 Route::post('/category','Category@store');
 Route::post('/product','Product@store');
 Route::post('/comment','Comment@store');
-Route::post('/product/{id}/addtocart', 'Product@addtocart');
+Route::post('/cart/{id}/addtocart', 'Cart@addtocart');
 
 /**
  * Lưu trữ dữ liệu khi sửa

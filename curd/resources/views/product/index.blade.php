@@ -5,10 +5,7 @@
 @endsection
 
 @section('content')
-    <?php if(!isset($_SESSION))
-    {
-        session_start();
-    }  ?>
+    @if (count($cartContent))
     <h2>
         Giỏ hàng
     </h2>
@@ -23,33 +20,30 @@
         </tr>
         </thead>
         <tbody>
-        <?php
-
-        $total = 0;
-        foreach ($_SESSION['cart_item'] as $key_car => $val_cart_item) : ?>
-        <tr>
-            <td><?php echo $val_cart_item['id'] ?></td>
-            <td><?php echo $val_cart_item['name'] ?></td>
-            <td><?php echo $val_cart_item['price'] ?></td>
-            <td><?php echo $val_cart_item['quantity'] ?></td>
-            <td><?php
-                $total_item =  ($val_cart_item['price'] * $val_cart_item['quantity']);
-                echo number_format($total_item,0,",",".");
-                ?> VNĐ</td>
-            <td>
-                <form name="remove<?php echo $val_cart_item['id'] ?>" action="process.php" method="post">
-                    <input type="hidden" name="product_id" value="<?php echo $val_cart_item['id'] ?>">
-                    <input type="hidden" name="action" value="remove">
-                    <input type="submit" name="submit" class="btn btn-sm btn-outline-secondary" value="Xóa" />
-                </form>
-
-            </td>
-        </tr>
-        <?php
-        $total += $total_item;
-        endforeach; ?>
+        @foreach($cartContent as $item)
+            <tr>
+                <td>{{ $item->id }}</td>
+                <td>{{ $item->name }}</td>
+                <td>{{ number_format($item->price,0,",",".") }}</td>
+                <td>{{ $item->quantity }}</td>
+                <td>@php
+                        $total_item = $item->quantity * $item->price;
+                        echo $total_item;
+                    @endphp VNĐ </td>
+                <th>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ url('cart/'.$item->id.'/remove') }}">Xóa</a>
+                </th>
+            </tr>
+        @endforeach
         </tbody>
     </table>
+    @else
+        <div class="container">
+            <h2 style="color: orange">Giỏ hàng</h2>
+            <p>Giỏ hàng của bạn đang rỗng</p>
+            <br>
+        </div>
+    @endif
 <h2>
     <a href="{{url('/product/create')}}" class="btn btn-success">Thêm sản phẩm</a>
 </h2>
@@ -81,7 +75,8 @@
                 <a href="{{ url('product/'.$product->id.'/delete') }}" class="btn btn-danger">Xóa</a>
             </td>
             <td>
-                <form name="submit-product" action="{{ url('product') }}" method="post">
+                <form name="submit-product" action="{{ url('/cart/'.$product['id'].'/addtocart') }}" method="post">
+                    @csrf
                     <input type="text" value="1" name="quantity" style="max-width: 35px">
                     <input type="hidden" name="id" value="{{$product->id}}">
                     <button type="submit" class="btn btn-danger">Thêm vào giỏ hàng</button>
